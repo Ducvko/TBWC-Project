@@ -6,7 +6,7 @@
 
 - Now, you can either clone this repository through GitHub Desktop by clicking on the green 'code' button on the web view of the repo, or you can directly download it to your computer.
 
-- Once you have this repository cloned or downloaded copy the 'Librares' folder into the Arduino folder located in documents on Windows, if it asks to replace files click yes. Note: when copying the Libraries folder you will copy **the actual folder and not the contents**.
+- Once you have this repository cloned or downloaded copy the *'Librares'* folder **into** the *Arduino* folder located in your documents on Windows, if it asks to replace files click yes. Note: when copying the Libraries folder you will copy **the actual folder and not the contents**.
 
 - Finally you can open up the Arduino IDE and select the .ino file in the repo.
 
