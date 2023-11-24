@@ -3,36 +3,45 @@
 
 #include "Arduino.h"
 
+
+typedef enum Mode{
+  POSITION,
+  VELOCITY
+} PIDMode;
+
 class PIDController {
 
   public:
-    PIDController(float *output, float *sensorData);
+    PIDController(float *output, float *sensorData, float period, PIDMode pidMode);
     void setPID(float kP, float kI, float kD);
     void setPlant(float setPoint);
-    void calculate(float collectionTime);
+    void setThreshold(float threshold);
+    void calculate(int millis);
   private:
-    float *_output;
+    PIDMode _pidMode;
+
     float *_sensorData;
 
-    float _prevTimeMillis = millis();
-    float _currentTime;
-    float _deltaTime;
+    float _period = 0.01;
 
-    float _errorSum;
-    float _error;
-    float _previousError = 0.001;
-    float _deltaError;
+    bool _firstCycle = true;
+
+    float _integral = 0;
+    float _error = 0;
+    float _previousError = _error;
+    float _deltaError = 0;
     void _calculateError();
 
-    float _kP;
-    float _kI;
-    float _kD;
+    float _setpoint;
+    float _threshold;
+
+    float _kP = 0;
+    float _kI = 0;
+    float _kD = 0;
     float _calculateP();
     float _calculateI();
     float _calculateD();
-
-    float _setpoint;
-
+    float *_output;
 };
 
 #endif

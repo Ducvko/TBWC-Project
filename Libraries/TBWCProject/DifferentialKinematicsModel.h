@@ -10,8 +10,8 @@ class DifferentialKinematicsModel {
 
     void calculate();
 
-    float rWheelSpeed;
-    float lWheelSpeed;
+    float rWheelSpeed = 0.0F;
+    float lWheelSpeed = 0.0F;
   private:
     float _trackWidth;
     float *_linearVel;

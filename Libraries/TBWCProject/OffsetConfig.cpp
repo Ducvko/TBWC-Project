@@ -2,20 +2,21 @@
 #include "OffsetConfig.h"
 
 
-// Constructor
+// Constructor assigns the private variable sensor__ with the passed in MPU6050 sensor
 OffsetConfig::OffsetConfig(MPU6050 *sensor) {
   sensor__ = sensor;
 }
 
+// The main routine that calibrates the offsets for the MPU6050 sensor
 bool OffsetConfig::startCalibration() {
   Serial.println("\nReading Values for the First Time...");
-  meansensors__();
+  meansensors__(); // takes the average of the first 101 values read from the sensor to smooth out the sensor readings
   delay(1000);
 
   bool CalibResult;
 
   Serial.println("\nCalculating offsets...");
-  CalibResult=calibration__();
+  CalibResult=calibration__(); // calibrates the offsets of the MPU 6050 sensor in this function
   if (CalibResult) {
     Serial.println("\nCalibration successful!");
   }
@@ -30,7 +31,7 @@ void OffsetConfig::meansensors__() {
   long i=0,buff_ax=0,buff_ay=0,buff_az=0,buff_gx=0,buff_gy=0,buff_gz=0;
   
   while (i <(buffersize+discardfirstmeas+1)){
-    // read raw accel/gyro measurements from device
+    // read raw accel/gyro measurements from sensor
     sensor__->getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
     
     if (i>discardfirstmeas && i<=(buffersize+discardfirstmeas)){ //First 100 measures are discarded
@@ -62,6 +63,14 @@ void OffsetConfig::meansensors__() {
   Serial.println(mean_gz);
 }
 
+/*
+ * This Function will take the average results of the sensor readings and will try to
+ * generate offset values so that the sensor readings converge to within 
+ * the threshold specified in the header file
+ * 
+ * Will loop until all offsets result in a value that is within the 
+ * threshold or until 100 loops occur resulting in a failed calibration
+ */
 bool OffsetConfig::calibration__() {
   int loopcount = 0;
   ax_offset=-mean_ax/accel_offset_divisor;
@@ -113,7 +122,7 @@ bool OffsetConfig::calibration__() {
 
     loopcount=loopcount+1;
     Serial.print("Loop Cnt: ");Serial.println(loopcount);
-    if (loopcount==20) {
+    if (loopcount==100) {
       return false;   
       break; // exit the calibration routine if no stable results can be obtained after 20 calibration loops
     }
